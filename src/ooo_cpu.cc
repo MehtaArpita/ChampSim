@@ -342,13 +342,9 @@ void O3_CPU::dispatch_instruction()
 void O3_CPU::schedule_instruction()
 {
   auto search_bw = SCHEDULER_SIZE;
-  for (auto rob_it = std::begin(ROB); rob_it != std::end(ROB) && search_bw > 0; ++rob_it) {
-    if (rob_it->scheduled == 0)
-      do_scheduling(*rob_it);
-
-    if (rob_it->executed == 0)
-      --search_bw;
-  }
+  auto [scheduler_begin, scheduler_end] = champsim::get_span(std::begin(scheduler), std::end(scheduler), SCHEDULER_SIZE);
+  std::for_each(scheduler_begin, scheduler_end, [this](const auto& sched){ this->do_scheduling(sched); });
+  std::transform(scheduler_begin, scheduler_end, std::back_inserter(executor), [](auto x){ });
 }
 
 void O3_CPU::do_scheduling(ooo_model_instr& instr)

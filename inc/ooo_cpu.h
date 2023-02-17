@@ -114,10 +114,24 @@ public:
   std::deque<ooo_model_instr> DECODE_BUFFER;
   std::deque<ooo_model_instr> ROB;
 
+  // Split metadata
+  struct scheduler_metadata {
+    std::vector<uint8_t> destination_registers = {}; // output registers
+    std::vector<uint8_t> source_registers = {};      // input registers
+  };
+  std::deque<scheduler_metadata> scheduler;
+  std::array<std::vector<std::reference_wrapper<ooo_model_instr>>, std::numeric_limits<uint8_t>::max() + 1> reg_producers;
+
+  struct execute_metadata {
+  };
+  std::deque<execute_metadata> executor;
+
+  struct memwait_metadata {
+  };
+  std::deque<memwait_metadata> memwaiter;
+
   std::vector<std::optional<LSQ_ENTRY>> LQ;
   std::deque<LSQ_ENTRY> SQ;
-
-  std::array<std::vector<std::reference_wrapper<ooo_model_instr>>, std::numeric_limits<uint8_t>::max() + 1> reg_producers;
 
   // Constants
   const std::size_t IFETCH_BUFFER_SIZE, DISPATCH_BUFFER_SIZE, DECODE_BUFFER_SIZE, ROB_SIZE, SQ_SIZE;
